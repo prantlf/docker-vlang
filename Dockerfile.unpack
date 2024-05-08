@@ -1,0 +1,19 @@
+FROM debian:stable-slim
+LABEL maintainer="Ferdinand Prantl <prantlf@gmail.com>"
+
+RUN apt-get update -y && apt-get upgrade -y && \
+  apt-get install -y --no-install-recommends binutils curl gcc git make \
+    patch unzip libc6-dev && \
+  apt-get clean && rm -rf /var/cache/apt/archives/* && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /opt
+# RUN ./fetch.sh
+COPY v_linux.zip .
+RUN unzip v_linux.zip && mkdir vlang && \
+  mv v/v vlang/v && mv v/v.mod vlang/v.mod && mv v/cmd vlang/cmd && \
+  mv v/thirdparty vlang/thirdparty && mv v/vlib vlang/vlib && \
+  rm -r v_linux.zip v && vlang/v -version
+
+ENV PATH /opt/vlang:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+WORKDIR /src

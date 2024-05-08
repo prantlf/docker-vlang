@@ -1,0 +1,14 @@
+FROM alpine
+LABEL maintainer="Ferdinand Prantl <prantlf@gmail.com>"
+
+RUN apk update && apk upgrade --no-cache && apk add --no-cache \
+  git make upx gcc bash musl-dev libc-dev openssl-dev sqlite-dev \
+  libx11-dev glfw-dev freetype-dev libc6-compat gcompat binutils
+
+WORKDIR /opt/vlang
+RUN git clone https://github.com/vlang/v /opt/vlang && make && \
+  rm -rf .[!.] .??* *.md D* G* L* M* bench changelogs0.x doc examples \
+    make.bat tutorials vc && ./v -version
+ENV PATH /opt/vlang:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+WORKDIR /src

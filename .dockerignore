@@ -1,0 +1,14 @@
+.DS_Store
+.dockerignore
+.git
+.github
+.gitignore
+.hadolint.yaml
+.vscode
+CHANGELOG.md
+Dockerfile*
+LICENSE
+Makefile
+README.md
+fetch-release.sh
+*.txt
