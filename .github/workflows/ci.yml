@@ -32,47 +32,49 @@ jobs:
         fi
       id: inspect
     - uses: docker/metadata-action@v5
-      # if: ${{ steps.inspect.outputs.publish == 'true' }}
+      if: ${{ steps.inspect.outputs.publish == 'true' }}
       id: meta
       with:
         images: |
           ghcr.io/prantlf/vlang
           prantlf/vlang
-        flavor: |
-          latest=true
+        tags: |
+          type=raw,value=${{ steps.inspect.outputs.name }}
+          type=raw,latest
     - uses: docker/login-action@v3
-      # if: ${{ steps.inspect.outputs.publish == 'true' }}
+      if: ${{ steps.inspect.outputs.publish == 'true' }}
       with:
         registry: ghcr.io
         username: ${{ github.repository_owner }}
         password: ${{ secrets.GITHUB_TOKEN }}
     - uses: docker/login-action@v3
-      # if: ${{ steps.inspect.outputs.publish == 'true' }}
+      if: ${{ steps.inspect.outputs.publish == 'true' }}
       with:
         username: ${{ secrets.DOCKERHUB_USER }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
     - run: |
         docker buildx imagetools create --tag ghcr.io/prantlf/vlang:previous ghcr.io/prantlf/vlang:latest
-      # if: ${{ steps.inspect.outputs.publish == 'true' }}
+        docker buildx imagetools create --tag prantlf/vlang:previous prantlf/vlang:latest
+      if: ${{ steps.inspect.outputs.publish == 'true' }}
     - uses: docker/build-push-action@v5
-      # if: ${{ steps.inspect.outputs.publish == 'true' }}
+      if: ${{ steps.inspect.outputs.publish == 'true' }}
       with:
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
         build-args: |
           VTAG=${{ steps.inspect.outputs.tag }}
-    # - run: |
-    #     git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-    #     git config --global user.name "github-actions[bot]"
-    #     git commit --allow-empty -m ${{ steps.inspect.outputs.name }}
-    #     git tag ${{ steps.inspect.outputs.tag }}
-    #     git push origin HEAD
-    #     git push origin ${{ steps.inspect.outputs.tag }}
-    #   if: ${{ steps.inspect.outputs.publish == 'true' }}
-    # - uses: softprops/action-gh-release@v2
-    #   if: ${{ steps.inspect.outputs.publish == 'true' }}
-    #   with:
-    #     name: ${{ steps.inspect.outputs.name }}
-    #     tag_name: ${{ steps.inspect.outputs.tag }}
-    #     make_latest: true
+    - run: |
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config --global user.name "github-actions[bot]"
+        git commit --allow-empty -m ${{ steps.inspect.outputs.name }}
+        git tag ${{ steps.inspect.outputs.tag }}
+        git push origin HEAD
+        git push origin ${{ steps.inspect.outputs.tag }}
+      if: ${{ steps.inspect.outputs.publish == 'true' }}
+    - uses: softprops/action-gh-release@v2
+      if: ${{ steps.inspect.outputs.publish == 'true' }}
+      with:
+        name: ${{ steps.inspect.outputs.name }}
+        tag_name: ${{ steps.inspect.outputs.tag }}
+        make_latest: true
