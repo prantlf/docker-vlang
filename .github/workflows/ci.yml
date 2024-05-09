@@ -10,6 +10,8 @@ on:
       - '**/*.md'
       - LICENSE
   pull_request:
+  schedule:
+    - cron: "0 12 * * 2,5"
 
 jobs:
 
@@ -17,7 +19,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - uses: prantlf/setup-v-action@v2
     - run: |
         curl -s -o vrel.txt https://api.github.com/repos/vlang/v/releases/latest
         VNAME=$(cat vrel.txt | jq -r '.name')
@@ -49,8 +50,9 @@ jobs:
         docker push ghcr.io/prantlf/vlang:previous
       if: ${{ steps.inspect.outputs.publish == 'true' }}
     - uses: docker/build-push-action@v5
+      if: ${{ steps.inspect.outputs.publish == 'true' }}
       with:
-        push: ${{ steps.inspect.outputs.publish == 'true' }}
+        push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
         build-args: |
