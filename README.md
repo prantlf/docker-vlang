@@ -18,7 +18,7 @@ WORKDIR /
 ENTRYPOINT ["/tool"]
 ```
 
-The default working directory is `/src`. THe `V` compiler is `/opt/vlang/v` and `/opt/vlang` is in `PATH`.
+The default working directory is `/src`. The `V` compiler is `/opt/vlang/v` and `/opt/vlang` is in `PATH`.
 
 The image `busybox:stable` is a little bigger than `scratch`, but it's convenient, when the image hes to be entered for some investigation. If your program links to other libraries than glibc, you'll ned to add them the target image. Or use the image `debian:stable-slim` as the base image, if the image size isn't critical.
 
