@@ -1,6 +1,6 @@
 # VLang Docker Image
 
-A Docker image with the [V] language compiler for building within Docker. The GitHub workflow produces an image `ghcr.io/prantlf/vlang:latest` from the latest release of `V`. It is supposed to run at least every week to follow weekly releases of `V`.
+A Docker image with the [V] language compiler for building within Docker. The GitHub workflow produces an image `ghcr.io/prantlf/vlang` from the latest release of `V`. It is supposed to run at least every week to follow weekly releases of `V`. The image will be tagged by `latest` and the image produced the last time will be tagged by `previous`.
 
 ## Synopsis
 
