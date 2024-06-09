@@ -31,6 +31,10 @@ jobs:
           echo "tag=$VTAG" >> $GITHUB_OUTPUT
         fi
       id: inspect
+    - uses: docker/setup-qemu-action@v3
+      if: ${{ steps.inspect.outputs.publish == 'true' }}
+    - uses: docker/setup-buildx-action@v3
+      if: ${{ steps.inspect.outputs.publish == 'true' }}
     - uses: docker/metadata-action@v5
       if: ${{ steps.inspect.outputs.publish == 'true' }}
       id: meta
@@ -62,6 +66,7 @@ jobs:
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
+        platforms: linux/amd64,linux/arm64
         build-args: |
           VTAG=${{ steps.inspect.outputs.tag }}
     - run: |
