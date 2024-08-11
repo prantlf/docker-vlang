@@ -1,4 +1,10 @@
-FROM debian:stable-slim
+FROM debian:stable-slim AS base-amd64
+
+FROM debian:stable-slim AS base-arm64
+
+FROM riscv64/debian:unstable-slim AS base-riscv64
+
+FROM base-$TARGETARCH
 LABEL maintainer="Ferdinand Prantl <prantlf@gmail.com>"
 
 RUN apt-get update -y && apt-get upgrade -y && \
