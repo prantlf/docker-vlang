@@ -77,9 +77,34 @@ jobs:
         git push origin HEAD
         git push origin ${{ steps.inspect.outputs.tag }}
       if: ${{ steps.inspect.outputs.publish == 'true' }}
+    - run: |
+        docker pull --platform=linux/amd64 prantlf/vlang
+        ID=$(docker create --platform=linux/amd64 prantlf/vlang)
+        docker cp $ID:/opt/vlang v
+        docker rm $ID
+        zip -r9 v-linux-x64.zip v
+        rm -r v
+    - run: |
+        docker pull --platform=linux/arm64 prantlf/vlang
+        ID=$(docker create --platform=linux/arm64 prantlf/vlang)
+        docker cp $ID:/opt/vlang v
+        docker rm $ID
+        zip -r9 v-linux-arm64.zip v
+        rm -r v
+    - run: |
+        docker pull --platform=linux/riscv64 prantlf/vlang
+        ID=$(docker create --platform=linux/riscv64 prantlf/vlang)
+        docker cp $ID:/opt/vlang v
+        docker rm $ID
+        zip -r9 v-linux-riscv64.zip v
+        rm -r v
     - uses: softprops/action-gh-release@v2
       if: ${{ steps.inspect.outputs.publish == 'true' }}
       with:
         name: ${{ steps.inspect.outputs.name }}
         tag_name: ${{ steps.inspect.outputs.tag }}
         make_latest: true
+        files: |
+          v-linux-x64.zip
+          v-linux-arm64.zip
+          v-linux-riscv64.zip
