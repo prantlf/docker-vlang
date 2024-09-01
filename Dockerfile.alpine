@@ -1,14 +1,33 @@
-FROM alpine
+FROM alpine AS base-386
+
+FROM alpine AS base-amd64
+
+FROM alpine AS base-armv6
+
+FROM alpine AS base-armv7
+
+FROM alpine AS base-arm64
+
+FROM alpine AS base-riscv64
+
+FROM --platform=$TARGETPLATFORM base-$TARGETARCH$TARGETVARIANT
 LABEL maintainer="Ferdinand Prantl <prantlf@gmail.com>"
 
 RUN apk update && apk upgrade --no-cache && apk add --no-cache \
-  git make upx gcc bash musl-dev libc-dev openssl-dev sqlite-dev \
+  git make upx gcc g++ bash patch musl-dev libc-dev openssl-dev sqlite-dev \
   libx11-dev glfw-dev freetype-dev libc6-compat gcompat binutils
 
 WORKDIR /opt/vlang
-RUN git clone https://github.com/vlang/v /opt/vlang && make && \
-  rm -rf .[!.] .??* *.md D* G* L* M* bench changelogs0.x doc examples \
-    make.bat tutorials vc && ./v -version
+ARG VTAG
+RUN git clone -b "${VTAG}" --depth 1 https://github.com/vlang/v /opt/vlang
+
+COPY VGNUmakefile ./GNUmakefile
+COPY use_bundled_libatomic.diff .
+RUN patch -p1 < use_bundled_libatomic.diff
+
+COPY build.sh .
+RUN ./build.sh
+
 ENV PATH /opt/vlang:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 WORKDIR /src

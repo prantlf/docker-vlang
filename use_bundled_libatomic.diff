@@ -1,0 +1,19 @@
+diff --git a/vlib/builtin/builtin_d_gcboehm.c.v b/vlib/builtin/builtin_d_gcboehm.c.v
+index 161a6de8f..23788e858 100644
+--- a/vlib/builtin/builtin_d_gcboehm.c.v
++++ b/vlib/builtin/builtin_d_gcboehm.c.v
+@@ -8,6 +8,14 @@ $if use_bundled_libgc ? {
+ 	#flag @VEXEROOT/thirdparty/libgc/gc.o
+ }
+ 
++$if use_bundled_libatomic ? {
++	#flag @VEXEROOT/thirdparty/libatomic_ops/atomic_ops.o
++	#flag -I @VEXEROOT/thirdparty/libatomic_ops
++
++	#flag -I @VEXEROOT/thirdparty/libgc/include
++	#flag @VEXEROOT/thirdparty/libgc/gc.o
++}
++
+ $if dynamic_boehm ? {
+ 	$if windows {
+ 		$if tinyc {
